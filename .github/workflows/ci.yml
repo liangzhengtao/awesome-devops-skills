@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          globs: |
+            **/*.md
+            !node_modules/**
+
+  links:
+    name: Check Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --exclude-mail
+            '**/*.md'
+          fail: false
+
+  structure:
+    name: Validate Structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify skill files exist
+        run: |
+          required_files=(
+            "skills/CI-CD/github-actions-advanced.md"
+            "skills/CI-CD/gitlab-cicd.md"
+            "skills/CI-CD/deployment-strategies.md"
+            "skills/容器化/docker-production.md"
+            "skills/容器化/kubernetes-essentials.md"
+            "skills/容器化/helm-charts.md"
+            "skills/云服务/aws-essentials.md"
+            "skills/云服务/terraform-iac.md"
+            "skills/云服务/serverless-patterns.md"
+            "skills/监控告警/prometheus-grafana.md"
+            "skills/监控告警/logging-stack.md"
+            "skills/监控告警/incident-response.md"
+          )
+          missing=0
+          for f in "${required_files[@]}"; do
+            if [[ ! -f "$f" ]]; then
+              echo "::error::Missing skill file: $f"
+              missing=$((missing + 1))
+            fi
+          done
+          if [[ $missing -gt 0 ]]; then
+            echo "::error::$missing required skill file(s) missing"
+            exit 1
+          fi
+          echo "All 12 skill files present ✓"
+
+      - name: Verify minimum line count
+        run: |
+          short_files=0
+          for f in skills/**/*.md; do
+            lines=$(wc -l < "$f")
+            if [[ $lines -lt 150 ]]; then
+              echo "::warning::$f has only $lines lines (minimum: 150)"
+              short_files=$((short_files + 1))
+            fi
+          done
+          if [[ $short_files -gt 0 ]]; then
+            echo "::warning::$short_files file(s) below 150-line minimum"
+          fi
