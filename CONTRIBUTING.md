@@ -31,11 +31,11 @@ Diagrams or descriptions of the system architecture.
 
 ## Code Templates / 代码模板
 
-Production-ready YAML, HCL, Dockerfile, or shell snippets.
+Production YAML, HCL, Dockerfile, or shell snippets.
 
 ## Proven Patterns / 最佳实践
 
-Numbered list of battle-tested recommendations.
+Numbered list of tried-and-true recommendations.
 
 ## Pitfalls / 常见陷阱
 

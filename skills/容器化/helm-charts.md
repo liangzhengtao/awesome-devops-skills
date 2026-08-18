@@ -53,7 +53,7 @@ Use this skill when:
 # Chart.yaml
 apiVersion: v2
 name: my-app
-description: Production-ready Helm chart for My Application
+description: Production Helm chart for My Application
 type: application
 version: 1.2.0        # Chart version
 appVersion: "2.5.0"   # Application version

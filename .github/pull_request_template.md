@@ -22,7 +22,7 @@ Brief description of the changes.
 
 - [ ] I have read the [Contributing Guide](CONTRIBUTING.md)
 - [ ] My changes follow the skill file template (150+ lines)
-- [ ] Code examples are tested and production-ready
+- [ ] Code examples are tested and production
 - [ ] Both EN and CN sections are included where applicable
 - [ ] I have added links to official documentation
 - [ ] Markdown lint passes locally
