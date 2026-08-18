@@ -11,7 +11,7 @@ Use this skill when:
 - Setting up remote state with locking (S3 + DynamoDB, GCS, Terraform Cloud)
 - Managing multiple environments with workspaces or directory layout
 - Implementing Terraform in CI/CD pipelines
-- Refactoring existing Terraform code to follow best practices
+- Refactoring existing Terraform code to follow proven patterns
 - Debugging Terraform state drift and plan failures
 - Migrating resources between Terraform modules or states
 
@@ -401,7 +401,7 @@ func TestVpcModule(t *testing.T) {
 }
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Use remote state with locking** — S3 + DynamoDB for AWS, GCS for GCP. Never use local state for shared infrastructure.
 2. **Separate state files per environment** — `production/networking/terraform.tfstate` vs `staging/networking/terraform.tfstate`. Blast radius isolation.

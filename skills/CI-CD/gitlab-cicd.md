@@ -324,7 +324,7 @@ build:api:
     - cd services/api
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Use `rules` instead of `only/except`** — `rules` is the modern syntax with better expressiveness and is the recommended approach.
 2. **Enable DAG with `needs`** — explicitly declare job dependencies so independent jobs run in parallel instead of sequentially.

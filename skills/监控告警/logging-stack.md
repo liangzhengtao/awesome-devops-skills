@@ -376,7 +376,7 @@ groups:
 }
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Write logs to stdout/stderr** — let the container runtime handle log collection. Never write to files inside containers.
 2. **Use structured logging (JSON)** — `{"level":"error","msg":"failed","user_id":123}` is parseable and queryable. Free-text is not.

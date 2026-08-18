@@ -1,6 +1,6 @@
 # Incident Response and On-Call / 故障响应与值班
 
-> On-call workflows, runbooks, escalation policies, post-mortem templates, and incident management best practices.
+> On-call workflows, runbooks, escalation policies, post-mortem templates, and incident management proven patterns.
 
 ## When to Use / 何时使用
 
@@ -396,7 +396,7 @@ vector(time() - (time() - (day_of_month() - 1) * 24 * 60 * 60))
 sum(rate(http_requests_total{status=~"5.."}[1h])) / sum(rate(http_requests_total[1h])) / 0.001
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Acknowledge alerts within 5 minutes** — unacknowledged alerts escalate. If you're investigating, acknowledge immediately.
 2. **Declare severity early** — don't wait to assess full impact. Declare SEV1 if there's any chance of data loss or full outage.

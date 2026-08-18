@@ -304,7 +304,7 @@ jobs:
         run: npx semantic-release
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Always set `permissions` explicitly** — least-privilege prevents token abuse. Default is read-write; narrow it down.
 2. **Use `concurrency` groups** — cancel redundant runs on the same branch to save runner minutes.

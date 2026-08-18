@@ -427,7 +427,7 @@ export const handler = async (event: any) => {
 // ProvisionedConcurrency: 10
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Use ARM64 (Graviton2)** — 20% cheaper and better performance. Set `Architectures: [arm64]` in SAM.
 2. **Initialize outside the handler** — database clients, HTTP connections, and SDK clients should be module-level for connection reuse.

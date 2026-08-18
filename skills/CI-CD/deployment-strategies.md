@@ -383,7 +383,7 @@ releases:
         args: ["{{ .Environment.Name }}"]
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Always use readiness probes** — Kubernetes routes traffic to pods only after readiness checks pass. Without them, requests hit unready containers.
 2. **Implement graceful shutdown** — handle SIGTERM, drain connections, and set `preStop` hooks to allow in-flight requests to complete.

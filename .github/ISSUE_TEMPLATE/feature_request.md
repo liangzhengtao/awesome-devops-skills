@@ -31,7 +31,7 @@ Outline the sections you'd expect:
 - [ ] When to Use
 - [ ] Architecture
 - [ ] Code Templates
-- [ ] Best Practices
+- [ ] Proven Patterns
 - [ ] Pitfalls
 
 ## References

@@ -425,7 +425,7 @@ resource "aws_budgets_budget" "monthly" {
 }
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Use IAM roles, never access keys** — ECS task roles and EC2 instance profiles eliminate static credentials. Use OIDC for CI/CD.
 2. **Enable VPC flow logs** — audit all network traffic. Essential for security investigations and compliance.

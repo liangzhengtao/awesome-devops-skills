@@ -82,7 +82,7 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
 ```
 
-### 2. values.yaml (Comprehensive)
+### 2. values.yaml (Complete)
 
 ```yaml
 # values.yaml
@@ -444,7 +444,7 @@ helm template my-app ./charts/my-app \
   --debug
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Use `--atomic` for production** — automatically rolls back on failure. Never deploy without it in production.
 2. **Set `checksum/config` annotation** — hash ConfigMaps into pod annotations to trigger rolling restarts on config change.

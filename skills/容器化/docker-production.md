@@ -292,7 +292,7 @@ docker buildx build \
   --push .
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Use multi-stage builds** — separate build dependencies from runtime. A Node.js app drops from 1.2GB to 45MB.
 2. **Run as non-root** — `USER 1001` prevents container breakout attacks from gaining root on the host.

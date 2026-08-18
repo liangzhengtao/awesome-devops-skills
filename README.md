@@ -85,7 +85,7 @@ Each skill follows a consistent format / 每个技能遵循统一格式：
 │  When to Use / 何时使用          │  ← Clear trigger conditions
 │  Architecture / 架构             │  ← ASCII diagrams
 │  Code Templates / 代码模板       │  ← YAML/HCL/Dockerfile
-│  Best Practices / 最佳实践       │  ← Battle-tested recommendations
+│  Proven Patterns / 最佳实践       │  ← Battle-tested recommendations
 │  Pitfalls / 常见陷阱             │  ← Common mistakes to avoid
 └─────────────────────────────────┘
 ```
@@ -111,10 +111,10 @@ Zero-downtime deployment patterns: blue-green with Argo Rollouts, canary with tr
 Production Docker patterns: multi-stage builds (45MB images), non-root containers, security scanning with Trivy, multi-architecture builds, and Docker Compose for production.
 
 ### [Kubernetes Essentials](skills/容器化/kubernetes-essentials.md)
-K8s production patterns: deployments with topology spread, RBAC least-privilege, HPA with custom metrics, NetworkPolicies, and comprehensive troubleshooting commands.
+K8s production patterns: deployments with topology spread, RBAC least-privilege, HPA with custom metrics, NetworkPolicies, and complete troubleshooting commands.
 
 ### [Helm Charts](skills/容器化/helm-charts.md)
-Helm best practices: modular chart structure, template helpers, multi-environment values, `--atomic` deployments, chart testing, and OCI registry publishing.
+Helm proven patterns: modular chart structure, template helpers, multi-environment values, `--atomic` deployments, chart testing, and OCI registry publishing.
 
 ---
 

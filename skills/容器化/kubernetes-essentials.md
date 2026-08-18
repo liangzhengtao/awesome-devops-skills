@@ -46,7 +46,7 @@ Use this skill when:
 
 ## Code Templates / 代码模板
 
-### 1. Production Deployment with All Best Practices
+### 1. Production Deployment with All Proven Patterns
 
 ```yaml
 # deployment.yaml
@@ -375,7 +375,7 @@ kubectl get events -n production --sort-by='.lastTimestamp' | tail -20
 kubectl get certificates -n production
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Use namespaces for isolation** — separate environments (staging, production) and teams into namespaces with ResourceQuotas.
 2. **Set resource requests AND limits** — requests for scheduling, limits for protection. Never skip requests; pods get low QoS class.

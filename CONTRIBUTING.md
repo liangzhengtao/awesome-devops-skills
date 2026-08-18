@@ -33,7 +33,7 @@ Diagrams or descriptions of the system architecture.
 
 Production-ready YAML, HCL, Dockerfile, or shell snippets.
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 Numbered list of battle-tested recommendations.
 
@@ -60,7 +60,7 @@ Common mistakes and how to avoid them.
 - Markdown files: Follow [CommonMark](https://commonmark.org/) spec
 - YAML: 2-space indentation
 - HCL: Use `terraform fmt` formatting
-- Dockerfiles: Follow [best practices](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
+- Dockerfiles: Follow [proven patterns](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
 
 ## Review Process
 

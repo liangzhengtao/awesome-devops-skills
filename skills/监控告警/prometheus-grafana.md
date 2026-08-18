@@ -392,7 +392,7 @@ volumes:
   grafana-data:
 ```
 
-## Best Practices / 最佳实践
+## Proven Patterns / 最佳实践
 
 1. **Use recording rules for expensive queries** — pre-compute P99, error rates, and Apdex scores. Dashboards load 10x faster.
 2. **Follow RED/USE methods** — Rate, Errors, Duration for services; Utilization, Saturation, Errors for infrastructure.

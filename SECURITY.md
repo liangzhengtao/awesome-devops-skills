@@ -41,7 +41,7 @@ This project contains documentation and code templates. Security concerns may in
 - We will credit you in the fix (unless you prefer anonymity)
 - We will not take legal action against researchers who report responsibly
 
-## Security Best Practices for Users
+## Security Proven Patterns for Users
 
 When using the skills in this repository:
 

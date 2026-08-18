@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `helm-charts.md` — Helm chart development, templating, repository management
 
 #### 云服务 (Cloud) Skills
-- `aws-essentials.md` — Core AWS services, IAM, VPC, best practices
+- `aws-essentials.md` — Core AWS services, IAM, VPC, proven patterns
 - `terraform-iac.md` — Terraform modules, state management, workspaces
 - `serverless-patterns.md` — Lambda, API Gateway, event-driven architectures
 
