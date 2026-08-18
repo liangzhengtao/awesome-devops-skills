@@ -426,3 +426,39 @@ func TestVpcModule(t *testing.T) {
 8. **Provider aliasing mistakes** — multi-region deployments need aliased providers. Forgetting the alias applies changes to the wrong region.
 9. **Data source caching** — `data.aws_ami` caches in state. Add lifecycle or use `terraform refresh` to get latest AMI.
 10. **Terraform Cloud costs** — Terraform Cloud charges per resource under management. Self-hosted backends (S3) are cheaper at scale.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 为新基础设施编写 Terraform 配置
+- 设计可复用的 Terraform 模块
+- 设置带锁的远程状态存储（S3 + DynamoDB）
+- 使用 workspace 或目录布局管理多环境
+- 在 CI/CD 流水线中集成 Terraform
+- 调试状态漂移和 plan 失败
+
+### 核心步骤
+
+1. **模块化设计** — 将 VPC、ECS、RDS 等抽取为独立模块，每个模块包含 main.tf、variables.tf、outputs.tf、versions.tf
+2. **远程状态 + 锁** — 使用 S3 + DynamoDB 实现状态远程存储和并发锁，启用 KMS 加密
+3. **环境组合** — 每个环境（staging/production）调用相同模块但传入不同参数，状态文件按环境隔离
+4. **CI/CD 集成** — PR 时自动 `terraform plan` 并将结果评论到 PR，main 分支合并后自动 `terraform apply`
+5. **测试** — 使用 Terratest 编写 Go 测试验证模块输出
+
+### 模板说明
+
+- 网络模块 — VPC + 公私子网 + NAT Gateway + Internet Gateway 的完整模块
+- 远程状态 — S3 + DynamoDB 后端配置和一次性初始化脚本
+- 环境组合 — production 环境如何组合 networking、database、compute 模块
+- CI 流水线 — GitHub Actions 中的 plan/apply 流水线，支持 PR 评论
+
+### 常见陷阱
+
+1. **状态文件冲突** — 没有 DynamoDB 锁时并发 `terraform apply` 会损坏状态
+2. **状态中的敏感数据** — Terraform 状态包含所有资源属性（包括密码），需加密存储并限制访问
+3. **不先 plan 就 apply** — CI 中自动 apply 应仅针对已审查的 plan
+4. **销毁状态后端** — `terraform destroy` 持有状态的 S3 bucket 会导致所有托管资源不可管理
+5. **Provider 别名遗漏** — 多区域部署需要 aliased provider，遗漏别名会将变更应用到错误区域

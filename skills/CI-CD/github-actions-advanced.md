@@ -329,3 +329,41 @@ jobs:
 8. **OIDC thumbprint rotation** — AWS OIDC provider thumbprints expire. Set up monitoring and rotation for the GitHub OIDC provider.
 9. **Artifact retention** — Default artifact retention is 90 days. Set `retention-days` to avoid storage costs for build artifacts.
 10. **Workflow file size limit** — GitHub limits workflow files to 65535 bytes. Split complex workflows using reusable workflow calls.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 首次在 GitHub 上搭建 CI/CD 流水线时
+- 优化慢速 GitHub Actions workflow
+- 使用 OIDC 实现安全部署（无需长期密钥）
+- 跨仓库构建可复用的 workflow 库
+- 出于成本或合规原因配置 self-hosted runner
+- 调试不稳定的 GitHub Actions workflow
+
+> 注意：GitLab CI/CD 请使用 `gitlab-cicd.md`。
+
+### 核心步骤
+
+1. **配置 CI 流水线** — 使用 matrix build 覆盖多版本 Node.js，设置 `concurrency` 取消冗余运行
+2. **启用 OIDC 部署** — 通过 `id-token: write` 权限实现无密钥 AWS 部署，避免长期 secret
+3. **构建可复用 workflow** — 将 Docker build、deploy 等步骤封装为 `workflow_call`，跨服务复用
+4. **配置缓存策略** — 使用 `actions/cache` 多层缓存 npm 依赖和构建产物，利用 GHA cache 缓存 Docker layer
+5. **自动发布** — 配合 `semantic-release` 实现版本自动管理和 changelog 生成
+
+### 模板说明
+
+- `ci.yml` — 包含 lint、test（matrix）、build 三个 job，使用 GHA cache 加速 Docker build
+- `deploy.yml` — OIDC 部署模板，支持 CloudFormation 部署和健康检查验证
+- `build-docker.yml` — 可复用 Docker 构建 workflow，支持自定义 Dockerfile 和 context
+- `release.yml` — semantic-release 自动发布模板
+
+### 常见陷阱
+
+1. **`fetch-depth` 不足** — semantic release 需要完整 git history，浅克隆会导致失败
+2. **Fork PR 无 secret** — 来自 fork 的 PR 默认无法访问仓库 secret，CI 设计需兼容无 secret 场景
+3. **缓存 key 过宽** — `hashFiles()` 需精确覆盖依赖面，key 过宽会导致缓存污染
+4. **Runner label 拼写错误** — self-hosted runner 需精确匹配 label，拼写错误会导致 job 静默排队
+5. **Environment 无审批人** — 配置了 required reviewer 但未分配审批人，部署会无限阻塞

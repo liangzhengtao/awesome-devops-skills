@@ -408,3 +408,39 @@ releases:
 8. **DNS TTL** — blue-green switches via DNS changes respect TTL caching. Use service mesh or load balancer switching instead.
 9. **Health check endpoint lies** — the `/health` endpoint must check downstream dependencies (DB, cache) not just "process is running."
 10. **Ignoring deployment velocity** — too-aggressive canary steps (10% → 50% → 100%) skip meaningful observation windows. Match step duration to your metric aggregation interval.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 选择蓝绿部署、金丝雀发布、滚动更新或重建部署策略
+- 在 Kubernetes 上实现零停机部署
+- 配置基于流量分割的渐进式交付
+- 设置错误率飙升时的自动回滚
+- 设计满足 SLA 要求的部署流水线
+- 从"大爆炸"发布迁移到更安全的增量策略
+
+### 核心步骤
+
+1. **滚动更新** — 配置 `maxSurge: 1` + `maxUnavailable: 0` 确保零停机，设置 readiness/liveness probe
+2. **蓝绿部署** — 使用 Argo Rollouts 的 `blueGreen` 策略，配置 active/preview service，保留旧版本以便快速回滚
+3. **金丝雀发布** — 通过 `canary.steps` 逐步增加流量（10% → 30% → 60% → 100%），配合 Prometheus 指标自动分析
+4. **自动回滚分析** — 定义 AnalysisTemplate 监控成功率、P99 延迟、错误率，自动触发回滚
+5. **AWS CodeDeploy 蓝绿** — 配置 ECS 蓝绿部署，支持自动回滚和终止旧实例
+
+### 模板说明
+
+- Rolling Deployment — 标准 K8s 滚动更新，包含完整的 probe 和 resource 配置
+- Argo Rollouts Blue-Green — 使用 Rollout CRD 实现蓝绿切换
+- Argo Rollouts Canary — 多阶段金丝雀发布，配合 traffic routing
+- AnalysisTemplate — Prometheus 指标驱动的自动分析和回滚模板
+
+### 常见陷阱
+
+1. **API 破坏性变更** — 新版本移除字段会导致旧客户端报错，API 变更必须向后兼容
+2. **长连接不配合滚动更新** — WebSocket/gRPC 流不尊重终止信号，需实现连接排空
+3. **Readiness probe 超时过短** — `initialDelaySeconds` 太短会导致流量打到未就绪的 Pod
+4. **数据库迁移锁** — 长时间 ALTER TABLE 会阻塞蓝绿两个版本，使用在线迁移工具（gh-ost）
+5. **金丝雀流量不足** — 10% 流量下 100 req/min 无法检测 P99 延迟问题，需保证统计显著性

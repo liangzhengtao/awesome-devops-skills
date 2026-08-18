@@ -469,3 +469,38 @@ helm template my-app ./charts/my-app \
 8. **Secret encryption at rest** — K8s Secrets are base64-encoded, not encrypted. Enable etcd encryption or use external secret management.
 9. **Chart size limit** — Helm releases have a 1MB limit for the release object. Large ConfigMaps or many resources can exceed this.
 10. **CRD management** — Helm 3 doesn't upgrade CRDs automatically. Use a separate chart or `kubectl apply` for CRD updates.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 为新应用创建 Helm chart
+- 使用模板和 values override 管理 Kubernetes 清单
+- 搭建 Helm chart 仓库（ChartMuseum、OCI、GitHub Pages）
+- 使用单元测试和集成测试测试 Helm chart
+- 管理多环境部署（dev、staging、prod）
+
+### 核心步骤
+
+1. **创建 Chart 结构** — `Chart.yaml` 定义元数据和依赖，`values.yaml` 定义默认值
+2. **编写 Deployment 模板** — 使用 `_helpers.tpl` 定义标签、名称等辅助函数，实现 DRY
+3. **多环境部署** — `values-staging.yaml` / `values-prod.yaml` 覆盖默认值，`--set` 动态注入 image tag
+4. **配置 checksum** — 将 ConfigMap hash 注入 Pod annotation，配置变更时自动触发滚动重启
+5. **Chart 测试** — 编写 `test-connection.yaml` 验证部署后的连通性，使用 `helm test` 执行
+
+### 模板说明
+
+- Chart.yaml — 包含 PostgreSQL 和 Redis 依赖的完整 chart 元数据
+- values.yaml — 涵盖所有常见配置项的生产级默认值
+- Deployment 模板 — 带校验、安全上下文、探针的完整 Deployment
+- _helpers.tpl — 标签、名称、ServiceAccount 等辅助模板
+
+### 常见陷阱
+
+1. **`helm upgrade` 不带 `--install`** — release 不存在时 `upgrade` 会失败，始终使用 `upgrade --install`
+2. **缺少 `--wait` 标志** — 不用 `--wait` 时 Helm 在 Pod 就绪前就返回成功
+3. **Value 类型不匹配** — `--set replicas=3` 可能创建字符串，注意类型推断
+4. **子 chart 版本未锁定** — 没有 `Chart.lock` 时 `helm dependency update` 可能拉取不同版本
+5. **CRD 不自动升级** — Helm 3 不会自动升级 CRD，需单独用 `kubectl apply` 管理

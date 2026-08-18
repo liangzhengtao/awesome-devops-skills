@@ -421,3 +421,39 @@ sum(rate(http_requests_total{status=~"5.."}[1h])) / sum(rate(http_requests_total
 8. **Not preserving evidence** — pod logs, events, and metrics disappear after restarts. Capture them before mitigation actions.
 9. **Skipping the post-mortem** — "we're too busy" means you'll repeat the incident. Every SEV1/SEV2 gets a post-mortem, no exceptions.
 10. **Over-escalating** — paging the CTO for a SEV3 erodes trust. Respect severity definitions and escalation policies.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 搭建值班轮换和升级策略
+- 为常见基础设施故障创建 runbook
+- 设计故障响应流程和沟通模板
+- 编写事后复盘（post-mortem）并跟踪行动项
+- 配置 PagerDuty、OpsGenie 或 Grafana OnCall
+- 建立无指责的复盘文化
+
+### 核心步骤
+
+1. **值班配置** — 使用 Terraform 管理 PagerDuty 轮换排班、升级策略和告警规则
+2. **Runbook 编写** — 为每个告警编写分步排查指南，包含确认告警、识别范围、检查依赖、缓解措施、验证恢复
+3. **故障沟通模板** — 初始通知（5 分钟内）、状态更新（每 15 分钟）、解决通知三阶段模板
+4. **事后复盘** — 包含时间线、根因分析、贡献因素、做得好/差的方面、带 owner 的行动项
+5. **SLO 仪表盘** — 计算错误预算消耗和燃烧率，预算低于 50% 时冻结非关键部署
+
+### 模板说明
+
+- PagerDuty Terraform — 用户、排班、升级策略、服务和告警规则的完整配置
+- Runbook 模板 — 高错误率的完整排查和缓解步骤（含具体命令）
+- Post-mortem 模板 — 包含元数据、影响、时间线、根因、行动项的标准化复盘模板
+- 沟通模板 — SEV2 故障的初始通知、状态更新、解决通知模板
+
+### 常见陷阱
+
+1. **告警疲劳** — 太多不可操作的告警导致工程师忽略 page，每月审计并精简告警
+2. **无值班交接** — 切换值班时不做交接意味着新值班不了解近期故障和进行中的问题
+3. **根因分析太浅** — "人为失误"不是根因，深挖为什么流程允许这个错误发生
+4. **行动项无人跟踪** — 没有跟踪的复盘就是走过场，每周审查未完成行动项
+5. **过度升级** — 为 SEV3 去 page CTO 会侵蚀信任，遵守严重性定义和升级策略

@@ -317,3 +317,38 @@ docker buildx build \
 8. **Layer ordering** — put frequently changing layers (COPY source) after rarely changing layers (COPY package.json) to maximize cache.
 9. **Health check too aggressive** — a health check that runs every 1s with a 1s timeout wastes CPU. Use 30s intervals with 5s timeouts.
 10. **No graceful shutdown** — containers need time to drain connections. Set `STOPSIGNAL SIGTERM` and handle it in application code.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 编写或优化生产环境 Dockerfile
+- 减小 Docker 镜像体积和构建时间
+- 加固容器安全（rootless、read-only、capabilities）
+- 实现正确的健康检查和优雅关闭
+- 构建多架构镜像（amd64 + arm64）
+
+### 核心步骤
+
+1. **多阶段构建** — 分离构建依赖和运行时依赖，Node.js 应用从 1.2GB 降至 45MB
+2. **非 root 运行** — 使用 `USER 1001` 防止容器逃逸攻击获取宿主机 root 权限
+3. **配置 HEALTHCHECK** — Docker 和编排器使用健康检查路由流量和重启不健康容器
+4. **使用 distroless/alpine** — 更小的镜像 = 更快的拉取、更小的攻击面、更少的 CVE
+5. **启用 BuildKit** — `DOCKER_BUILDKIT=1` 启用并行构建、更好的缓存和 secret mount
+
+### 模板说明
+
+- Node.js 多阶段构建 — deps → build → production 三阶段，包含安全加固和健康检查
+- Python 应用 — 使用 `--prefix` 安装依赖，配合 gunicorn + uvicorn
+- Go 应用 — 使用 distroless 镜像，CGO_ENABLED=0 静态编译
+- Docker Compose 生产栈 — 包含资源限制、只读文件系统、安全选项
+
+### 常见陷阱
+
+1. **以 root 运行** — Docker 默认用户是 root，务必添加 `USER` 指令
+2. **先 COPY 全部源码再安装依赖** — 应先 `COPY package.json` 安装依赖再拷贝源码以最大化缓存
+3. **无 `.dockerignore`** — 每次构建发送 500MB 的 `.git` 和 `node_modules` 到 daemon
+4. **生产环境使用 `latest` tag** — `latest` 是可变的，使用语义版本 tag 或镜像摘要
+5. **未处理 SIGTERM** — 应用不处理 SIGTERM 时 Docker 会在宽限期后发送 SIGKILL，损坏进行中的请求

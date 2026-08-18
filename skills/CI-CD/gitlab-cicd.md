@@ -349,3 +349,39 @@ build:api:
 8. **Pipeline quotas on SaaS** — GitLab.com has compute minute limits. Use `interruptible: true` on all jobs to auto-cancel on new pushes.
 9. **Helm `--wait` timeout** — on large deployments, the default 300s timeout may not be enough. Monitor rollout status separately.
 10. **Environment URL variable interpolation** — `$CI_COMMIT_REF_SLUG` in environment URLs must be lowercase and 63 chars max. Long branch names will break the URL.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 在 GitLab（自托管或 SaaS）上搭建 CI/CD 流水线
+- 从 Jenkins 或其他 CI 系统迁移到 GitLab
+- 实现带有 DAG 依赖的复杂多阶段流水线
+- 在 Kubernetes 或云 VM 上配置 GitLab Runner 自动扩缩容
+- 配置 GitLab environment 和 review app
+- 集成容器扫描、SAST、DAST 安全扫描
+
+### 核心步骤
+
+1. **编写 `.gitlab-ci.yml`** — 定义 stages（build、test、scan、deploy），配置 Docker-in-Docker 构建
+2. **配置 DAG 依赖** — 使用 `needs` 关键字声明 job 依赖，实现并行执行
+3. **设置 Runner** — 配置 autoscaling runner（docker+machine executor），支持定时扩缩容
+4. **集成安全扫描** — 通过 `include` 引入 GitLab 内置 SAST、依赖扫描、容器扫描模板
+5. **配置 Review App** — 为 MR 自动创建临时环境，设置自动停止时间
+
+### 模板说明
+
+- 完整生产流水线 — 包含 build、test（unit + integration）、安全扫描、staging/production 部署
+- DAG 流水线 — 使用 `needs` 实现 frontend/backend 并行构建和测试
+- Runner 配置 — AWS autoscaling runner 的 `config.toml` 完整配置
+- Review App — MR 触发的动态环境，支持自动清理
+
+### 常见陷阱
+
+1. **`only/except` 已弃用** — 仍可使用但已标记弃用，应迁移到 `rules` 语法
+2. **DinD 安全风险** — `privileged: true` 有安全隐患，生产环境建议使用 Kaniko 或 Buildah
+3. **缓存 key 冲突** — 不同分支写入相同缓存 key 会损坏缓存，务必包含 `$CI_COMMIT_REF_SLUG`
+4. **Protected variable 可见性** — 标记为 Protected 的变量仅在受保护分支/tag 上可用
+5. **Artifact 过期** — 默认保留 30 天，需设置 `expire_in` 管理存储成本

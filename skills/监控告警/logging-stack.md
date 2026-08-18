@@ -401,3 +401,38 @@ groups:
 8. **No sampling for high-volume logs** — logging every request in a high-traffic API creates TB/day. Use head or tail sampling.
 9. **Elasticsearch heap sizing** — ES heap should be 50% of available RAM, max 32GB. Above 32GB disables compressed oops.
 10. **Fluentd memory buffering** — memory buffers without limits cause OOM. Use file-based buffers for reliability.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 为微服务搭建集中式日志系统
+- 在 ELK Stack 和 Grafana Loki 之间做选择
+- 配置 Fluentd、Fluent Bit 或 Vector 日志收集
+- 编写 LogQL（Loki）或 KQL/Lucene（Elasticsearch）查询
+- 管理日志保留策略和存储成本
+
+### 核心步骤
+
+1. **Loki 部署** — Helm 部署 Loki，配置 S3 存储、TSDB schema、30 天保留期和速率限制
+2. **Fluent Bit DaemonSet** — 配置 tail input 采集容器日志，kubernetes filter 添加元数据，输出到 Loki
+3. **Vector 现代替代** — 使用 Rust 编写的 Vector 替代 Fluentd，支持 JSON 解析、过滤、元数据丰富
+4. **LogQL 查询** — 按 namespace/container 过滤，JSON 解析，错误率统计，Top-K 分析
+5. **日志告警** — 配置 Loki Ruler 基于日志内容触发高错误率和 OOMKilled 告警
+
+### 模板说明
+
+- Loki Helm values — read/write/gateway 分离架构，S3 存储，速率限制配置
+- Fluent Bit ConfigMap — 完整的 input/filter/output 配置，包含 CRI parser
+- Vector 配置 — Kubernetes 日志采集、JSON 解析、过滤、Loki 输出的 TOML 配置
+- LogQL 示例 — 基础查询、JSON 解析、pattern 解析、错误率统计、unwrap 聚合
+
+### 常见陷阱
+
+1. **生产环境使用 DEBUG 日志** — DEBUG 日志产生 10 倍数据量，生产环境设为 INFO/WARN
+2. **无日志关联** — 没有 request_id/trace_id 时无法跨服务追踪请求
+3. **Elasticsearch 集群过载** — 无 ILM 时高流量日志索引无限增长，磁盘满 = 集群 red
+4. **Loki 高基数标签** — 将 `user_id` 作为标签索引会导致 Loki 内存爆炸
+5. **Grep 式告警不精确** — `|= "error"` 会匹配 "error-free"，使用 `| json | level="error"` 精确过滤

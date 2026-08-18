@@ -452,3 +452,39 @@ export const handler = async (event: any) => {
 8. **Lambda concurrency limits** — default 1000 concurrent executions per region. Request a limit increase for high-traffic APIs.
 9. **Dead letter queue monitoring** — DLQ messages are silently stored. Set up CloudWatch alarms on DLQ depth.
 10. **Vendor lock-in** — serverless architectures are deeply tied to cloud provider services. Abstract critical business logic from provider-specific APIs.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 使用 Lambda + API Gateway 构建 API
+- 使用 EventBridge 或 SNS/SQS 设计事件驱动架构
+- 使用 Step Functions 实现异步工作流
+- 处理 S3 上传、DynamoDB 流或 Kinesis 事件
+- 优化 Lambda 冷启动和执行成本
+- 从常驻服务器迁移到 serverless
+
+### 核心步骤
+
+1. **Lambda + API Gateway** — TypeScript handler 实现 CRUD，使用 DynamoDB single-table design
+2. **SAM/CloudFormation 模板** — 使用 `AWS::Serverless` 资源定义函数、API、DynamoDB，配置 arm64 架构节省成本
+3. **Step Functions 工作流** — 定义顺序/并行/错误处理的状态机，支持 retry 和 catch
+4. **EventBridge 规则** — 基于事件模式路由 S3 事件和自定义应用事件到对应 Lambda
+5. **冷启动优化** — 模块级初始化（数据库客户端复用）、Provisioned Concurrency、arm64 架构
+
+### 模板说明
+
+- Lambda handler — 完整的 TypeScript CRUD handler，包含输入验证和错误处理
+- SAM 模板 — API Gateway + Lambda + DynamoDB + S3 事件 + 定时任务的完整模板
+- Step Functions — 订单处理工作流（验证 → 并行处理支付和库存 → 通知）
+- EventBridge — S3 事件和自定义事件的规则配置
+
+### 常见陷阱
+
+1. **冷启动延迟** — Node.js 200-500ms，Java/Python 1-5s，关键路径使用 Provisioned Concurrency
+2. **无连接复用** — 每次调用创建新 DB 连接又慢又耗资源，在模块级复用连接
+3. **超时级联** — Lambda 超时(30s) + API Gateway 超时(30s) + 下游超时，总时间不能超过最外层
+4. **DynamoDB 限流** — on-demand 模式处理突发但有限制，可预测负载使用 provisioned capacity + auto-scaling
+5. **API Gateway payload 限制** — REST API 10MB，WebSocket 128KB，大文件使用 presigned S3 URL

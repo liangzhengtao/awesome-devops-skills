@@ -417,3 +417,38 @@ volumes:
 8. **No SLO error budget** — without error budgets, teams either ignore all alerts or burn out on pages. Define 99.9% SLO = 43.8 min/month downtime budget.
 9. **Rate interval too short** — `rate(metric[1m])` is noisy. Use `rate(metric[5m])` for stability.
 10. **Missing kube-state-metrics** — pod, deployment, and node metadata requires kube-state-metrics. Without it, K8s resource metrics are incomplete.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 从零搭建应用和基础设施监控
+- 编写 PromQL 查询用于仪表盘和告警
+- 配置各种服务的 Prometheus exporter（Node、MySQL、Redis、Nginx）
+- 设计基于 SLO 的告警规则和升级策略
+- 实现高可用 Prometheus（Thanos/Mimir）
+
+### 核心步骤
+
+1. **Prometheus 配置** — 设置 scrape_interval、retention、持久化存储，配置 Kubernetes pod 自动发现
+2. **Recording Rules** — 预计算请求速率、错误率、P99 延迟等高频查询，仪表盘加载速度提升 10x
+3. **SLO 告警规则** — 基于错误预算燃烧率告警，而非任意阈值，减少告警疲劳
+4. **Alertmanager 路由** — 按 severity 路由到 PagerDuty（critical）和 Slack（warning），配置分组和抑制
+5. **Grafana 仪表盘** — 使用模板变量（namespace、service）实现一个仪表盘服务所有环境
+
+### 模板说明
+
+- Prometheus Helm values — 包含 server、alertmanager、node-exporter、kube-state-metrics 的完整配置
+- Recording Rules — 请求速率、错误率、P99/P95 延迟、Apdex 分数的预计算规则
+- Alerting Rules — 高错误率、SLO 燃烧率、高 CPU/内存、Pod crash loop、PV 空间不足等告警
+- Grafana Dashboard JSON — 请求速率、错误率、延迟分布的核心面板
+
+### 常见陷阱
+
+1. **高基数标签爆炸** — `user_id` 等标签有 10 万个值 × 100 个指标 = 1000 万时间序列
+2. **告警规则缺少 `for`** — 没有 `for` 时瞬时尖峰会触发告警，大多数告警至少 `for: 5m`
+3. **Recording rules 过于细粒度** — 按每个标签 recording 会失去缓存优势，只按仪表盘实际使用的标签
+4. **Prometheus scrape 超时** — scrape 超过 `scrape_timeout` 时指标被丢弃，慢 exporter 需增加超时
+5. **无 SLO 错误预算** — 没有错误预算时团队要么忽略所有告警要么被 page 疲劳淹没

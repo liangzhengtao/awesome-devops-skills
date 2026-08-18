@@ -400,3 +400,38 @@ kubectl get certificates -n production
 8. **OOMKilled but not detected** — `kubectl describe pod` shows OOMKilled in the last state, but `kubectl logs` won't show why. Check events.
 9. **PVC Pending state** — PersistentVolumeClaims stay Pending when no matching PV or StorageClass exists. Check `kubectl describe pvc`.
 10. **Cluster DNS overload** — every pod makes DNS queries. CoreDNS needs proper resource limits and HPA configured for large clusters.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 首次将应用部署到 Kubernetes
+- 调试 Pod 崩溃、网络问题或资源问题
+- 配置 RBAC、NetworkPolicy 和 Pod 安全策略
+- 设置 HPA 和 VPA 自动扩缩容
+- 理解 Kubernetes 网络（Service、Ingress、DNS）
+
+### 核心步骤
+
+1. **编写生产级 Deployment** — 设置 resource requests/limits、securityContext（non-root、readOnlyRootFilesystem）、topologySpreadConstraints
+2. **配置 Service + Ingress** — ClusterIP Service + Nginx Ingress + cert-manager 自动 TLS
+3. **RBAC 最小权限** — 创建专用 ServiceAccount，仅授予所需的 Secret 读取权限
+4. **HPA 自动扩缩** — 基于 CPU/内存/自定义指标（http_requests_per_second）自动扩缩
+5. **NetworkPolicy 隔离** — 默认拒绝所有流量，显式允许 ingress-nginx 和数据库访问
+
+### 模板说明
+
+- Production Deployment — 包含所有最佳实践的完整 Deployment YAML
+- Service + Ingress — 配合 cert-manager 和 rate-limit 的 Ingress 配置
+- RBAC — ServiceAccount、Role、RoleBinding 最小权限配置
+- HPA — 基于多指标的自动扩缩容，包含扩缩行为控制
+
+### 常见陷阱
+
+1. **无 resource requests** — 没有 requests 的 Pod 获得 BestEffort QoS，节点压力时最先被驱逐
+2. **Liveness probe 过于激进** — `failureThreshold: 1` + `periodSeconds: 1` 会不断重启 Pod
+3. **ConfigMap/Secret 不自动重载** — 挂载的 ConfigMap 不会自动刷新，需使用 Reloader 或重启 Deployment
+4. **Service selector 不匹配** — selector 与 Pod label 不匹配时 Service 无 endpoint，用 `kubectl get endpoints` 验证
+5. **OOMKilled 难以发现** — `kubectl describe pod` 显示 OOMKilled 但 `kubectl logs` 不显示原因，需检查 events

@@ -450,3 +450,39 @@ resource "aws_budgets_budget" "monthly" {
 8. **Cross-AZ data transfer** — traffic between AZs costs $0.01/GB. Co-locate chatty services in the same AZ.
 9. **CloudWatch log retention** — logs default to "never expire." Set retention to 30-90 days for non-critical logs.
 10. **Hardcoded account IDs** — use `data.aws_caller_identity` in Terraform instead of hardcoding account IDs.
+
+---
+
+## 中文版本
+
+### 使用场景
+
+- 为新应用设计 AWS 基础设施
+- 配置最小权限的 IAM 策略和角色
+- 搭建含公私子网的 VPC 网络
+- 在 ECS、EKS 或 EC2 上部署应用
+- 管理 S3 存储桶的安全和生命周期
+- 优化 AWS 成本和预留容量
+
+### 核心步骤
+
+1. **VPC 网络规划** — 多 AZ 公私子网 + intra 子网（数据库），每 AZ 一个 NAT Gateway 实现高可用
+2. **IAM 最小权限** — 为应用创建专用 Task Role，仅授予 S3 特定 bucket 和 Secrets Manager 特定 secret 的访问权限
+3. **ECS Fargate 部署** — 配置 Task Definition（资源限制、健康检查、日志），使用 deployment circuit breaker 自动回滚
+4. **RDS 高可用** — Aurora PostgreSQL Serverless v2 + Multi-AZ + 自动备份 + 加密 + 删除保护
+5. **S3 安全** — 启用版本控制、服务端加密、Block Public Access、生命周期策略
+
+### 模板说明
+
+- VPC — 多 AZ 公私子网 + flow logs 的完整 VPC 配置
+- IAM — 应用 Task Role + GitHub Actions OIDC 角色
+- ECS Fargate — 完整的集群、Task Definition、Service 配置
+- RDS — Aurora Serverless v2 集群 + 实例配置
+
+### 常见陷阱
+
+1. **IAM 权限过大** — Action 或 Resource 中的 `*` 是安全漏洞，使用 IAM Access Analyzer 识别未使用权限
+2. **S3 公开访问** — 使用账户级别的 Block Public Access，仅在明确需要时覆盖
+3. **NAT Gateway 成本** — NAT Gateway 按 GB 计费，使用 VPC endpoint 访问 AWS 服务可避免 NAT 成本
+4. **RDS 未加密** — 创建时未加密则后续无法添加，务必在创建时启用加密
+5. **CloudWatch 日志永不过期** — 默认"永不过期"，非关键日志设置 30-90 天保留期
