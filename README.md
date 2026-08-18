@@ -17,7 +17,7 @@ n<div align="center">
 
 > **Stop firefighting. 12 AI skills to automate your infrastructure.**
 
-A curated collection of production-ready AI skills for DevOps and infrastructure automation. Each skill file is a self-contained knowledge module that an AI agent can load to help you build, deploy, monitor, and operate production systems.
+A curated collection of production AI skills for DevOps and infrastructure automation. Each skill file is a self-contained knowledge module that an AI agent can load to help you build, deploy, monitor, and operate production systems.
 
 ---
 
@@ -59,7 +59,7 @@ A curated collection of production-ready AI skills for DevOps and infrastructure
 
 1. **Choose a skill** from the table above based on your task
 2. **Load the skill file** into your AI agent's context
-3. **Apply the templates** — each skill contains production-ready code
+3. **Apply the templates** — each skill contains production code
 
 ### For Developers
 
@@ -84,7 +84,7 @@ Each skill follows a consistent format:
 │  When to Use                    │  ← Clear trigger conditions
 │  Architecture                   │  ← ASCII diagrams
 │  Code Templates                 │  ← YAML/HCL/Dockerfile
-│  Proven Patterns                │  ← Battle-tested recommendations
+│  Proven Patterns                │  ← Tried-and-true recommendations
 │  Pitfalls                       │  ← Common mistakes to avoid
 └─────────────────────────────────┘
 ```
@@ -157,7 +157,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 **Skill requirements:**
 - 150+ lines per file
 - Must include all 5 sections
-- Production-ready code templates
+- Production code templates
 
 ---
 
